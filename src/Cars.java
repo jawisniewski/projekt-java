@@ -6,6 +6,7 @@ public class Cars {
   private String year;
   private double course;
   private String warnings;
+  public Cars(){}
 public Cars(String name,String year, double course,String warnings){
   super();
   this.name=name;

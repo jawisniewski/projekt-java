@@ -3,17 +3,19 @@ import java.sql.SQLException;
 public class Main {
 
     public static void main(String[] args) {
-        dbconnect d=new dbconnect();
-
+        dbconnect db=new dbconnect();
+        View view=new View();
         Cars cars1 = new Cars("MAN TGA","2010",200000,"brak");
 
          Run run1 = new Run("gdansk-torun","Brak", 200, 4000,1);
-      // d.insertCars(cars1);
+      // db.insertCars(cars1);
 
-     //  d.insertRun(run1);
-      //  d.closeConnection();
-    //   d.deleteRun( "3" );
-        d.selectCars();
+     //  db.insertRun(run1);
+      //  db.closeConnection();
+    //   db.deleteRun( "3" );
+        view.getCars();
+        view.getRun();
+        //db.selectRun();
     }
 
 

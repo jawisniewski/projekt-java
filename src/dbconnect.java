@@ -119,14 +119,14 @@ public class dbconnect {
             e.printStackTrace();
         }
     }
-    public List<Cars> CarsSelect(){
+    public List<Cars> selectCars(){
 
         List<Cars> Car=new ArrayList<Cars>();
         try {
             ResultSet resultSet = ViewCars.executeQuery();
             while (resultSet.next()) {
                 Cars auto=new Cars();
-               // auto.setId_cars(resultSet.getInt("id_car"));
+                auto.setId_cars(resultSet.getInt("id_cars"));
                 auto.setName(resultSet.getString("name"));
 
                 auto.setYear(resultSet.getString("year"));
@@ -142,9 +142,9 @@ public class dbconnect {
         }
         return Car;
     }
-    public List<Run> Run(){
+    public List<Run> selectRun(){
 
-        List<Run> Runs=new ArrayList<Run>();
+        List<Run> Runs= new ArrayList<>();
         try {
             ResultSet resultSet = ViewRun.executeQuery();
             while (resultSet.next()) {
@@ -164,6 +164,15 @@ public class dbconnect {
             e.printStackTrace();
         }
         return Runs;
+    }
+    public void closeConnection() {
+        try {
+            Conn.close();
+            System.out.println("Polaczenie zamknieto pomyslnie");
+        } catch (SQLException e) {
+            System.err.println("Problem z zamknieciem polaczenia");
+            e.printStackTrace();
+        }
     }
 
     }

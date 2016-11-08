@@ -6,6 +6,7 @@ public class Run {
   private Double price;
   private Double distance;
   private int cars_id;
+  public  Run(){}
 public Run(String name,String warnings,double price, double distance,int cars_id){
   super();
   this.name=name;
