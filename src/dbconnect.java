@@ -24,8 +24,12 @@ public class dbconnect {
 
     private PreparedStatement deleteCars;
     private PreparedStatement ViewCars;
+    private PreparedStatement ViewRunWithCar;
 
     private PreparedStatement ViewRun;
+    private PreparedStatement AddCarToRun;
+
+    private PreparedStatement DeleteCarToRun;
 
     public dbconnect() {
         try {
@@ -41,9 +45,12 @@ public class dbconnect {
             insertRun= Conn.prepareStatement("insert INTO run(name, distance, price, warnings, cars_id) VALUES (?,?,?,?,?);");
             insertCars= Conn.prepareStatement("insert INTO cars(name, year,  course, warnings) VALUES (?,?,?,?);");
             deleteCars=Conn.prepareStatement("DELETE FROM cars WHERE  '?'=?");
-            deleteRun=Conn.prepareStatement("DELETE FROM  run WHERE   id_run =?");
+            deleteRun=Conn.prepareStatement("DELETE FROM  run WHERE   cars_id =?");
             ViewCars = Conn.prepareStatement("Select * FROM cars");
              ViewRun= Conn.prepareStatement("Select * FROM run");
+             AddCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= ? WHERE id_run=?");
+           DeleteCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= NULL WHERE cars_id=?");
+            ViewRunWithCar = Conn.prepareStatement("Select * FROM run where cars_id=?");
 
         }
         catch (SQLException e){
@@ -165,12 +172,54 @@ public class dbconnect {
         }
         return Runs;
     }
+    public List<Run> selectRunWithCar(int CarRun){
+
+        List<Run> CarList= new ArrayList<>();
+        try {
+           ViewRunWithCar.setInt(1,CarRun);
+            ResultSet resultSet = ViewRunWithCar.executeQuery();
+
+            while (resultSet.next()) {
+                Run run=new Run();
+                run.setId_run(resultSet.getInt("id_run"));
+                run.setName(resultSet.getString("name"));
+                run.setDistance(resultSet.getDouble("distance"));
+                run.setPrice(resultSet.getDouble("price"));
+                run.setWarnings(resultSet.getString("warnings"));
+                run.setCars_id(resultSet.getInt("cars_id"));
+
+
+                CarList.add(run);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return CarList;
+    }
     public void closeConnection() {
         try {
             Conn.close();
             System.out.println("Polaczenie zamknieto pomyslnie");
         } catch (SQLException e) {
             System.err.println("Problem z zamknieciem polaczenia");
+            e.printStackTrace();
+        }
+    }
+    public  void updateRun(int carId,int runId){
+        try {
+            AddCarToRun.setInt(1, carId);
+
+            AddCarToRun.setInt(2, runId);
+            AddCarToRun.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  void updateRunDelete(int carId){
+        try {
+            DeleteCarToRun.setInt(1, carId);
+            DeleteCarToRun.execute();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

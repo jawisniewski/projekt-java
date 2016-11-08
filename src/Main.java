@@ -13,8 +13,11 @@ public class Main {
      //  db.insertRun(run1);
       //  db.closeConnection();
     //   db.deleteRun( "3" );
-        view.getCars();
-        view.getRun();
+       // db.updateRun(2,4);
+      //  db.updateRunDelete(1);
+    //    view.getCars();
+      //  view.getRun();
+        view.getCarRun(2);
         //db.selectRun();
     }
 
