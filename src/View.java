@@ -32,11 +32,10 @@ viewCars(Listcar);
 
     }public void getCarRun(int Car_id){
 
-        List<Run> CarRun = new ArrayList<>();
-        if(Car_id!=0)
+        List<Run> CarRun ;
+
            CarRun =db.selectRunWithCar(Car_id);
-        else
-            CarRun =db.selectRunWithCar(Car_id);
+
        // db.closeConnection();
         viewRun(CarRun);
     }

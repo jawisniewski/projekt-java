@@ -58,7 +58,7 @@ public class dbconnect {
         }
     }
 
-        public void createTable(){
+        public boolean createTable(){
             String createCars="CREATE TABLE IF NOT EXISTS cars(" +
                     "id_cars  INT NOT NULL AUTO_INCREMENT PRIMARY KEY , " +
                     "name VARCHAR(255) NOT NULL," +
@@ -77,13 +77,15 @@ public class dbconnect {
                 Stat.execute(createCars);
                 Stat.execute(createRun);
                 Stat.execute(alterTableRun);
+
             } catch (SQLException e) {
                 System.err.println("Blad przy tworzeniu tabeli");
                 e.printStackTrace();
+                return false;
             }
-
+            return true;
         }
-    public void insertCars(Cars cars){
+    public boolean insertCars(Cars cars){
         try {
            // String name,String year, double course,String warnings
 
@@ -94,12 +96,15 @@ public class dbconnect {
             insertCars.setString(4, cars.getWarnings());
 
             insertCars.execute();
+
         } catch (SQLException e) {
 
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
-    public void insertRun(Run run) {
+    public boolean insertRun(Run run) {
         try {
       //      insert.setString(1,"run");
         //    insert.setString(2,"name, distance, price, warnings, cars_id");
@@ -110,11 +115,15 @@ public class dbconnect {
 
             insertRun.setInt(5, run.getCars_id());
             insertRun.execute();
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
-    public void deleteRun(String parameter) {
+
+    public boolean deleteRun(String parameter) {
         try {
 
      //   deleteRun.setString(1,column);
@@ -124,7 +133,9 @@ public class dbconnect {
         deleteRun.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
     public List<Cars> selectCars(){
 

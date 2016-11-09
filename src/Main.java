@@ -16,7 +16,7 @@ public class Main {
        // db.updateRun(2,4);
       //  db.updateRunDelete(1);
     //    view.getCars();
-      //  view.getRun();
+        //  view.getRun();
         view.getCarRun(2);
         //db.selectRun();
     }
