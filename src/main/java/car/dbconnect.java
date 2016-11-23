@@ -1,5 +1,4 @@
-import com.sun.org.apache.bcel.internal.generic.Select;
-
+package car;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,8 @@ public class dbconnect {
     private PreparedStatement AddCarToRun;
 
     private PreparedStatement DeleteCarToRun;
-
+    private PreparedStatement dropTableCars;
+    private PreparedStatement dropTableRun;
     public dbconnect() {
         try {
             Class.forName(DB_DRIVER);
@@ -44,50 +44,51 @@ public class dbconnect {
             createTable();
             insertRun= Conn.prepareStatement("insert INTO run(name, distance, price, warnings, cars_id) VALUES (?,?,?,?,?);");
             insertCars= Conn.prepareStatement("insert INTO cars(name, year,  course, warnings) VALUES (?,?,?,?);");
-            deleteCars=Conn.prepareStatement("DELETE FROM cars WHERE  '?'=?");
-            deleteRun=Conn.prepareStatement("DELETE FROM  run WHERE   cars_id =?");
-            ViewCars = Conn.prepareStatement("Select * FROM cars");
-             ViewRun= Conn.prepareStatement("Select * FROM run");
-             AddCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= ? WHERE id_run=?");
-           DeleteCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= NULL WHERE cars_id=?");
-            ViewRunWithCar = Conn.prepareStatement("Select * FROM run where cars_id=?");
-
+            deleteCars=Conn.prepareStatement("DELETE FROM cars WHERE  '?'=?;");
+            deleteRun=Conn.prepareStatement("DELETE FROM  run WHERE   cars_id =?;");
+            ViewCars = Conn.prepareStatement("Select * FROM cars;");
+            ViewRun= Conn.prepareStatement("Select * FROM run;");
+            AddCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= ? WHERE id_run=?;");
+            DeleteCarToRun = Conn.prepareStatement("UPDATE run SET cars_id= NULL WHERE cars_id=?;");
+            ViewRunWithCar = Conn.prepareStatement("Select * FROM run where cars_id=?;");
+            dropTableCars = Conn.prepareStatement("Drop table if EXISTS cars;");
+            dropTableRun = Conn.prepareStatement("Drop table if EXISTS run;");
         }
         catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-        public boolean createTable(){
-            String createCars="CREATE TABLE IF NOT EXISTS cars(" +
-                    "id_cars  INT NOT NULL AUTO_INCREMENT PRIMARY KEY , " +
-                    "name VARCHAR(255) NOT NULL," +
-                    "Course int NOT NULL, " +
-                    "year year NOT NULL, " +
-                    "warnings VARCHAR(255))";
-            String createRun="CREATE TABLE IF NOT EXISTS run(" +
-                    "id_run  INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "name VARCHAR(255) NOT NULL, " +
-                    "price double NOT NULL, " +
-                    "cars_id int NOT NULL," +
-                    "distance double NOT NULL," +
-                    "warnings VARCHAR(255))";
-            String alterTableRun= "ALTER TABLE run ADD FOREIGN KEY (cars_id) REFERENCES cars(id_cars)";
-            try {
-                Stat.execute(createCars);
-                Stat.execute(createRun);
-                Stat.execute(alterTableRun);
+    public boolean createTable(){
+        String createCars="CREATE TABLE IF NOT EXISTS cars(" +
+                "id_cars  INT NOT NULL AUTO_INCREMENT PRIMARY KEY , " +
+                "name VARCHAR(255) NOT NULL," +
+                "Course int NOT NULL, " +
+                "year year NOT NULL, " +
+                "warnings VARCHAR(255))";
+        String createRun="CREATE TABLE IF NOT EXISTS run(" +
+                "id_run  INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                "name VARCHAR(255) NOT NULL, " +
+                "price double NOT NULL, " +
+                "cars_id int ," +
+                "distance double NOT NULL," +
+                "warnings VARCHAR(255))";
+        String alterTableRun= "ALTER TABLE run ADD FOREIGN KEY (cars_id) REFERENCES cars(id_cars)";
+        try {
+            Stat.execute(createCars);
+            Stat.execute(createRun);
+            Stat.execute(alterTableRun);
 
-            } catch (SQLException e) {
-                System.err.println("Blad przy tworzeniu tabeli");
-                e.printStackTrace();
-                return false;
-            }
-            return true;
+        } catch (SQLException e) {
+            System.err.println("Blad przy tworzeniu tabeli");
+            e.printStackTrace();
+            return false;
         }
+        return true;
+    }
     public boolean insertCars(Cars cars){
         try {
-           // String name,String year, double course,String warnings
+            // String name,String year, double course,String warnings
 
             insertCars.setString(1, cars.getName());
             insertCars.setString(2, cars.getYear());
@@ -106,8 +107,8 @@ public class dbconnect {
     }
     public boolean insertRun(Run run) {
         try {
-      //      insert.setString(1,"run");
-        //    insert.setString(2,"name, distance, price, warnings, cars_id");
+            //      insert.setString(1,"run");
+            //    insert.setString(2,"name, distance, price, warnings, cars_id");
             insertRun.setString(1, run.getName());
             insertRun.setDouble(2, run.getDistance());
             insertRun.setDouble(3, run.getPrice());
@@ -126,11 +127,11 @@ public class dbconnect {
     public boolean deleteRun(String parameter) {
         try {
 
-     //   deleteRun.setString(1,column);
-           // deleteRun.setString(1,column);
-       // columnName=column;
-        deleteRun.setString(1,parameter);
-        deleteRun.executeUpdate();
+            //   deleteRun.setString(1,column);
+            // deleteRun.setString(1,column);
+            // columnName=column;
+            deleteRun.setString(1,parameter);
+            deleteRun.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -187,7 +188,7 @@ public class dbconnect {
 
         List<Run> CarList= new ArrayList<>();
         try {
-           ViewRunWithCar.setInt(1,CarRun);
+            ViewRunWithCar.setInt(1,CarRun);
             ResultSet resultSet = ViewRunWithCar.executeQuery();
 
             while (resultSet.next()) {
@@ -216,7 +217,7 @@ public class dbconnect {
             e.printStackTrace();
         }
     }
-    public  void updateRun(int carId,int runId){
+    public  boolean updateRun(int carId,int runId){
         try {
             AddCarToRun.setInt(1, carId);
 
@@ -224,18 +225,30 @@ public class dbconnect {
             AddCarToRun.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
-    public  void updateRunDelete(int carId){
+    public  boolean updateRunDelete(int carId){
         try {
             DeleteCarToRun.setInt(1, carId);
             DeleteCarToRun.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
+    }
+    public  boolean dropTable(){
+        try {
+            dropTableRun.execute();
+            dropTableCars.execute();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-    }
-
-
-
+}
