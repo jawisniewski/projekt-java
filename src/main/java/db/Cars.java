@@ -1,5 +1,4 @@
-package car;
-
+package db;
 public class Cars {
   private int id_cars;
   private String name;

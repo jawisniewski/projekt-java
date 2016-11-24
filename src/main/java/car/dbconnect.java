@@ -1,4 +1,7 @@
 package car;
+import db.Cars;
+import db.Run;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -211,7 +214,7 @@ public class dbconnect {
     public void closeConnection() {
         try {
             Conn.close();
-            System.out.println("Polaczenie zamknieto pomyslnie");
+            System.out.println("Polaczenie zakończone");
         } catch (SQLException e) {
             System.err.println("Problem z zamknieciem polaczenia");
             e.printStackTrace();
